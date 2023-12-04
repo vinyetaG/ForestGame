@@ -1,19 +1,16 @@
 let canvas; 
 let gl;
 
-let near = -25;
+let near = -10;
 let far = 10;
 
 const MOVE_STEP = 1.0;
-const PAN_STEP = 2.0;
-
+const PAN_STEP = 3.0;
 
 let trunksArr = [];
 let leavesArr = [];
-let eyeX=0, eyeY=0, eyeZ=-25;
-let atX=0, atY=0, atZ=-10;
-let eye;
-let at = vec3(atX, atY, atZ);
+let eyeX=0, eyeY=0, eyeZ=-30;
+let atX=0, atY=0, atZ=-25;
 let up = vec3(0.0, 1.0, 0.0);
 
 let uniformModelView, uniformProjection;
@@ -79,6 +76,7 @@ function init(){
     gl.polygonOffset(1.0, 2.0);
 
     let eye = vec3(eyeX, eyeY, eyeZ);
+    let at = vec3(atX, atY, atZ);
     viewMatrix = lookAt(eye, at, up);
     
     draw();
@@ -109,10 +107,9 @@ function generateTrees() {
             leavesArr.push(leaves);
         }
     }
-
 }
 
-//
+//Configure textures used by the game to later be sent down to GPU
 function configureTextures() {
     let bark = new Image();
     bark.src = document.getElementById("bark").src; 
@@ -160,7 +157,7 @@ function configureTexture(texNum, image, program ) {
 function draw(){
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
  
-	// Display the current near and far values
+	//Display the current near and far values (for testing purposes only)
 	nf.innerHTML = 'near: ' + Math.round(near * 100)/100 + ', far: ' + Math.round(far*100)/100;
     
     //Send down bark texture and draw trunks
@@ -232,14 +229,30 @@ function setUpVertexObject(shape){
     return vao;
 }
 
+//Move eye and at position forward in the view direction
 function forward() {
-    viewMatrix = mult(translate(0, 0, MOVE_STEP), viewMatrix);
-    atZ -= MOVE_STEP;
+    let eye = getEyePosition(viewMatrix);
+    let at = vec3(atX, atY, atZ);
+
+    let viewDirection = normalize(subtractV3V3(eye, at));
+    let newEye = scaleAndAddForward(viewDirection, eye);
+    let newAt = scaleAndAddForward(viewDirection, at);
+    
+    atX = newAt[0]; atY = newAt[1]; atZ = newAt[2];
+    viewMatrix = lookAt(newEye, newAt, up);
 }
 
+//Move eye and at position backward in the view direction
 function back() {
-    viewMatrix = mult(translate(0, 0, -MOVE_STEP), viewMatrix);
-    //atZ += MOVE_STEP;
+    let eye = getEyePosition(viewMatrix);
+    let at = vec3(atX, atY, atZ);
+    
+    let viewDirection = normalize(subtractV3V3(eye, at));
+    let newEye = scaleAndAddBackward(viewDirection, eye);
+    let newAt = scaleAndAddBackward(viewDirection, at);
+    
+    atX = newAt[0]; atY = newAt[1]; atZ = newAt[2];
+    viewMatrix = lookAt(newEye, newAt, up);
 }
 
 function panL(){
@@ -318,5 +331,38 @@ function multM3V3( u, v ) {
 //     mv[2][3] = dot(negEye,n);
 // }
 
+//Subtract two 3D vectors (a - b)
+function subtractV3V3(a, b) {
+    let x = a[0] - b[0];
+    let y = a[1] - b[1];
+    let z = a[2] - b[2];
+    return vec3(x, y, z);
+}
 
+//Add normalized vector -a * MOVE_STEP to b for forward movement, 
+//with MOVE_STEP determining amount of movement
+function scaleAndAddForward(a, b) {
+    let out = vec3();
+
+    //Invert magnitude of a for proper forward movement
+    a[0] *= -1; a[1] *= -1; a[2] *= -1;
+
+    out[0] = b[0] + (a[0] * MOVE_STEP);
+    out[1] = b[1] + (a[1] * MOVE_STEP);
+    out[2] = b[2] + (a[2] * MOVE_STEP);
+    
+    //Revert vector a to normal in case it is used again
+    a[0] *= -1; a[1] *= -1; a[2] *= -1;
+    return out;
+}
+
+//Add normalized vector a * MOVE_STEP to b for backward movement, 
+//with MOVE_STEP determining amount of movement
+function scaleAndAddBackward(a, b) {
+    let out = vec3();
+    out[0] = b[0] + (a[0] * MOVE_STEP);
+    out[1] = b[1] + (a[1] * MOVE_STEP);
+    out[2] = b[2] + (a[2] * MOVE_STEP);
+    return out;
+}
 
