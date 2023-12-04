@@ -14,11 +14,32 @@ let viewMatrix, projectionMatrix;
 
 let trunksArr = [];
 let leavesArr = [];
-// let groundVertices = [vec3(-60, 0, -60),
-//     vec3(60, 0, -60),
-//     vec3(-60, 0, 60),
-//     vec3(60, 0, 60),
-// ]
+let ground = {
+    positions: [
+                vec3(-60, -2.0, -60),
+                vec3(60, -2.0, -60),
+                vec3(-60, -2.0, 60),
+                vec3(60, -2.0, 60)
+               ],
+    normals: [
+              vec3(0, 1, 0),
+              vec3(0, 1, 0),
+              vec3(0, 1, 0),
+              vec3(0, 1, 0)
+             ],
+    texcoord: [
+        vec3(-60, -2.0, -60),
+        vec3(60, -2.0, -60),
+        vec3(-60, -2.0, 60),
+        vec3(60, -2.0, 60)
+       ],
+    indices: [0, 1, 2, 2, 3, 1]
+}
+let groundVertices = [vec3(-60, 0, -60),
+    vec3(60, 0, -60),
+    vec3(-60, 0, 60),
+    vec3(60, 0, 60),
+]
 
 let lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
 let lightAmbient = vec4(0.8, 0.8, 0.9, 1.0);
@@ -78,6 +99,7 @@ function init(){
 
  //-----------------------------------------------------------------------
     generateTrees();
+    generateGround();
 
 
     draw();
@@ -110,19 +132,33 @@ function generateTrees() {
     }
 }
 
+function generateGround() {
+    ground.materialDiffuse =  vec4( 0.35, 0.35, 0.50, 1.0); 
+    ground.materialAmbient =  vec4( 0.2, 0.5, 0.2, 1.0 ); 
+    ground.materialSpecular = vec4( 0.3, 0.9, 0.5, 1.0 );
+    ground.materialShininess = 80.0;
+    ground.modelMatrix = mat4();
+    ground.vao = setUpVertexObject(ground);
+}
+
 function draw(){
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
  
 	//Display the current near and far values (for testing purposes only)
 	nf.innerHTML = 'near: ' + Math.round(near * 100)/100 + ', far: ' + Math.round(far*100)/100;
+
     
-    //Send down bark texture and draw trunks
+    
+    //Send down bark texture and render trunks
     gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), 0);
     trunksArr.forEach((trunk) => drawVertexObject(trunk));
 
-    //Send down leaves texture and draw leaves
+    //Send down leaves texture and render leaves
     gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), 1);
     leavesArr.forEach((leaves) => drawVertexObject(leaves));
+
+    gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), 2);
+    drawVertexObject(ground);
 
     requestAnimationFrame(draw)
 }

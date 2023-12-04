@@ -13,6 +13,12 @@ function configureTextures() {
     leaves.onload = function() {
         configureTexture(1, leaves, program);
     }
+
+    let grass = new Image();
+    grass.src = document.getElementById("grass").src; 
+    grass.onload = function() {
+        configureTexture(2, leaves, program);
+    }
 }
 
 //Configure given image to be used as texture texNum
