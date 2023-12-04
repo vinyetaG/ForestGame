@@ -85,8 +85,11 @@
     
     <!--By changing the JSON file, can view different objects-->
 	<script type="text/javascript" src="CS371utils.js"></script>
-	<script type="text/javascript" src="Forest Game.js"></script>
+	<script type="text/javascript" src="forestgame.js"></script>
     <script type="text/javascript" src="shapes.js"></script>
+    <script type="text/javascript" src="camera.js"></script>
+    <script type="text/javascript" src="textures.js"></script>
+    <script type="text/javascript" src="vao.js"></script>
 </head>
 
 <body onload="init();">
@@ -94,8 +97,8 @@
 		Oops ... your browser doesn't support the HTML5 canvas element
 	</canvas>
     <div>
-        <b>Current Color: </b><br>
-        <b>Target Color: </b><br><br>
+        <b>Current Color:</b><div id="currColor" style="background-color:rgba(20.1, 20.1, 201.22, 1); position: relative; margin-left: 605px;  width: 90px; height: 30px;"></div><br>
+        <b>Target Color:</b><div id="targetColor" style="background-color:rgba(200, 20.1, 40, 1); position: relative; margin-left: 605px;  width: 90px; height: 30px;"></div><br>
         <b>Controls:</b><br>
         W and S: Move forward or back<br>
         A and D: Turn left or right<br>
@@ -104,5 +107,7 @@
 	</div>
     <img id = "bark" src = "textures/bark.jpg" hidden></img>
     <img id = "leaves" src = "textures/pineleaves.png" hidden></img>
+    <img id = "grass" src = "textures/grass.jpg" hidden></img>
+
 </body>
 </html>
