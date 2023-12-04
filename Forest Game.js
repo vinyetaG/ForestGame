@@ -235,8 +235,8 @@ function forward() {
     let at = vec3(atX, atY, atZ);
 
     let viewDirection = normalize(subtractV3V3(eye, at));
-    let newEye = scaleAndAddForward(viewDirection, eye);
-    let newAt = scaleAndAddForward(viewDirection, at);
+    let newEye = scaleAndAdd(true, viewDirection, eye);
+    let newAt = scaleAndAdd(true, viewDirection, at);
     
     atX = newAt[0]; atY = newAt[1]; atZ = newAt[2];
     viewMatrix = lookAt(newEye, newAt, up);
@@ -248,8 +248,8 @@ function back() {
     let at = vec3(atX, atY, atZ);
     
     let viewDirection = normalize(subtractV3V3(eye, at));
-    let newEye = scaleAndAddBackward(viewDirection, eye);
-    let newAt = scaleAndAddBackward(viewDirection, at);
+    let newEye = scaleAndAdd(false, viewDirection, eye);
+    let newAt = scaleAndAdd(false, viewDirection, at);
     
     atX = newAt[0]; atY = newAt[1]; atZ = newAt[2];
     viewMatrix = lookAt(newEye, newAt, up);
@@ -339,30 +339,22 @@ function subtractV3V3(a, b) {
     return vec3(x, y, z);
 }
 
-//Add normalized vector -a * MOVE_STEP to b for forward movement, 
-//with MOVE_STEP determining amount of movement
-function scaleAndAddForward(a, b) {
+//Add normalized vector a * MOVE_STEP to b for 
+//with MOVE_STEP determining degree of movement
+//Magnitude of a is inverted if doing forward movement
+function scaleAndAdd(forward, a, b) {
     let out = vec3();
 
     //Invert magnitude of a for proper forward movement
-    a[0] *= -1; a[1] *= -1; a[2] *= -1;
-
+    if (forward) {
+        a[0] *= -1; a[1] *= -1; a[2] *= -1;
+    }
     out[0] = b[0] + (a[0] * MOVE_STEP);
     out[1] = b[1] + (a[1] * MOVE_STEP);
-    out[2] = b[2] + (a[2] * MOVE_STEP);
-    
-    //Revert vector a to normal in case it is used again
-    a[0] *= -1; a[1] *= -1; a[2] *= -1;
+    out[2] = b[2] + (a[2] * MOVE_STEP); 
+    //If doing forward movement, revert vector a to normal for later use
+    if (forward) {
+        a[0] *= -1; a[1] *= -1; a[2] *= -1;
+    }
     return out;
 }
-
-//Add normalized vector a * MOVE_STEP to b for backward movement, 
-//with MOVE_STEP determining amount of movement
-function scaleAndAddBackward(a, b) {
-    let out = vec3();
-    out[0] = b[0] + (a[0] * MOVE_STEP);
-    out[1] = b[1] + (a[1] * MOVE_STEP);
-    out[2] = b[2] + (a[2] * MOVE_STEP);
-    return out;
-}
-
