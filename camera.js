@@ -1,4 +1,14 @@
-//File containing functions related to modifying view matrix (camera movement)
+//File containing data related to modifying view matrix (camera movement)
+
+let near = -5;
+let far = 10;
+let eyeX=0, eyeY=0.5, eyeZ=-30;
+let atX=0, atY=0.5, atZ=-25;
+let up = vec3(0.0, 1.0, 0.0);
+const MOVE_STEP = 1.0;
+const PAN_STEP = 3.0;
+const X_BOUND = 60;
+const Z_BOUND = 60;
 
 //Key-press event handlers for moving the camera
 function keydown(ev) {
@@ -26,6 +36,11 @@ function forward() {
 
     let viewDirection = normalize(subtractV3V3(eye, at));
     let newEye = scaleAndAdd(true, viewDirection, eye);
+    //Check new eye position is inbounds before moving
+    if (newEye[0] < -60 || newEye[0] > 60 ||
+        newEye[2] < -60 || newEye[2] > 60) {
+        return;
+    }
     let newAt = scaleAndAdd(true, viewDirection, at);
     
     atX = newAt[0]; atY = newAt[1]; atZ = newAt[2];
@@ -39,6 +54,11 @@ function back() {
     
     let viewDirection = normalize(subtractV3V3(eye, at));
     let newEye = scaleAndAdd(false, viewDirection, eye);
+    //Check new eye position is inbounds before moving
+    if (newEye[0] < -60 || newEye[0] > 60 ||
+        newEye[2] < -60 || newEye[2] > 60) {
+        return;
+    }
     let newAt = scaleAndAdd(false, viewDirection, at);
     
     atX = newAt[0]; atY = newAt[1]; atZ = newAt[2];

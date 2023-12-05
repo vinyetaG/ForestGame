@@ -1,14 +1,6 @@
 let canvas; 
 let gl;
 
-let near = -10;
-let far = 10;
-let eyeX=0, eyeY=0.5, eyeZ=-30;
-let atX=0, atY=0.5, atZ=-25;
-let up = vec3(0.0, 1.0, 0.0);
-const MOVE_STEP = 1.0;
-const PAN_STEP = 3.0;
-
 let uniformModelView, uniformProjection;
 let viewMatrix, projectionMatrix;    
 
@@ -98,18 +90,23 @@ function init(){
     configureTextures();
 
  //-----------------------------------------------------------------------
-    generateTrees();
-    generateGround();
+    generateForest();
+    configureGems();
+    placeGems();
+    //generateGround();
 
 
     draw();
 }
 
-//Populate array of trunks and leaves for each tree
-function generateTrees() { 
+//Populate array of trunks and leaves for each tree, set up possible
+//gem positions
+function generateForest() { 
     for (let x = -50; x <= 50; x += 5) {
         for (let z = -50; z <= 50; z += 5) {
             if (x == 0) { continue; }
+
+            possibleGemPos.push(vec3(x + 2.5, 0, z + 2.5));
             let trunk =  createTruncatedConeVertices(0.5 ,0.5, 4.0, 30, 10, true, true);
             let leaves = createTruncatedConeVertices(2.0, 0, 7.0, 30, 20, true, true);
 
@@ -157,8 +154,9 @@ function draw(){
     gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), 1);
     leavesArr.forEach((leaves) => drawVertexObject(leaves));
 
-    gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), 2);
-    drawVertexObject(ground);
+
+    // gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), 2);
+    // drawVertexObject(ground);
 
     requestAnimationFrame(draw)
 }

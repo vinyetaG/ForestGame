@@ -17,7 +17,13 @@ function configureTextures() {
     let grass = new Image();
     grass.src = document.getElementById("grass").src; 
     grass.onload = function() {
-        configureTexture(2, leaves, program);
+        configureTexture(2, grass, program);
+    }
+
+    let moon = new Image();
+    moon.src = document.getElementById("moon").src; 
+    moon.onload = function() {
+        configureTexture(3, moon, program);
     }
 }
 
@@ -29,6 +35,8 @@ function configureTexture(texNum, image, program ) {
         case 1: gl.activeTexture( gl.TEXTURE1 ); break;
         case 2: gl.activeTexture( gl.TEXTURE2 ); break;
         case 3: gl.activeTexture( gl.TEXTURE3 ); break;
+        case 4: gl.activeTexture( gl.TEXTURE4 ); break;
+        case 5: gl.activeTexture( gl.TEXTURE5 ); break;
     }
     //gl.activeTexture( gl.TEXTURE0 );  //0 active by default
     gl.bindTexture(gl.TEXTURE_2D, texture);
