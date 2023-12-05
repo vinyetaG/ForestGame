@@ -19,6 +19,9 @@ function keydown(ev) {
         case 68: // 'd'key - pan camera right
             panR();
             break;
+        case 69: // 'e'key - check current eye position (only for testing/demoing)
+            console.log(getEyePosition(viewMatrix));
+            break;
         case 87: // 'w' key - move forward
             forward();
             break;
@@ -37,8 +40,8 @@ function forward() {
     let viewDirection = normalize(subtractV3V3(eye, at));
     let newEye = scaleAndAdd(true, viewDirection, eye);
     //Check new eye position is inbounds before moving
-    if (newEye[0] < -60 || newEye[0] > 60 ||
-        newEye[2] < -60 || newEye[2] > 60) {
+    if (newEye[0] < -X_BOUND || newEye[0] > X_BOUND ||
+        newEye[2] < -Z_BOUND || newEye[2] > Z_BOUND) {
         return;
     }
     let newAt = scaleAndAdd(true, viewDirection, at);
@@ -55,8 +58,8 @@ function back() {
     let viewDirection = normalize(subtractV3V3(eye, at));
     let newEye = scaleAndAdd(false, viewDirection, eye);
     //Check new eye position is inbounds before moving
-    if (newEye[0] < -60 || newEye[0] > 60 ||
-        newEye[2] < -60 || newEye[2] > 60) {
+    if (newEye[0] < -X_BOUND || newEye[0] > X_BOUND ||
+        newEye[2] < -Z_BOUND || newEye[2] > Z_BOUND) {
         return;
     }
     let newAt = scaleAndAdd(false, viewDirection, at);

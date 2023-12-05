@@ -25,9 +25,34 @@ function configureTextures() {
     moon.onload = function() {
         configureTexture(3, moon, program);
     }
+
+    let diamond = new Image();
+    diamond.src = document.getElementById("diamond").src; 
+    diamond.onload = function() {
+        configureTexture(4, diamond, program);
+    }
+
+    let ruby = new Image();
+    ruby.src = document.getElementById("ruby").src; 
+    ruby.onload = function() {
+        configureTexture(5, ruby, program);
+    }
+
+    let sapphire = new Image();
+    sapphire.src = document.getElementById("sapphire").src; 
+    sapphire.onload = function() {
+        configureTexture(6, sapphire, program);
+    }
+
+    let emerald = new Image();
+    emerald.src = document.getElementById("emerald").src; 
+    emerald.onload = function() {
+        configureTexture(7, emerald, program);
+    }
+     
 }
 
-//Configure given image to be used as texture texNum
+//Configure given image to be used as texture number texNum
 function configureTexture(texNum, image, program ) {
     texture = gl.createTexture();
     switch(texNum) {
@@ -37,6 +62,9 @@ function configureTexture(texNum, image, program ) {
         case 3: gl.activeTexture( gl.TEXTURE3 ); break;
         case 4: gl.activeTexture( gl.TEXTURE4 ); break;
         case 5: gl.activeTexture( gl.TEXTURE5 ); break;
+        case 6: gl.activeTexture( gl.TEXTURE6 ); break;
+        case 7: gl.activeTexture( gl.TEXTURE7 ); break;
+        case 8: gl.activeTexture( gl.TEXTURE8 ); break;
     }
     //gl.activeTexture( gl.TEXTURE0 );  //0 active by default
     gl.bindTexture(gl.TEXTURE_2D, texture);

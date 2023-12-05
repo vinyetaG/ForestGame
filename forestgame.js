@@ -92,7 +92,8 @@ function init(){
  //-----------------------------------------------------------------------
     generateForest();
     configureGems();
-    placeGems();
+    placeGems();    
+    
     //generateGround();
 
 
@@ -154,6 +155,9 @@ function draw(){
     gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), 1);
     leavesArr.forEach((leaves) => drawVertexObject(leaves));
 
+    drawGems();
+    //testGems();
+    
 
     // gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), 2);
     // drawVertexObject(ground);
