@@ -92,7 +92,8 @@ function init(){
  //-----------------------------------------------------------------------
     generateForest();
     configureGems();
-    placeGems();    
+    placeGems();
+    computeAvgColor(); 
     
     //generateGround();
 
