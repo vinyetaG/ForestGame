@@ -4,6 +4,7 @@ let gl;
 let uniformModelView, uniformProjection;
 let viewMatrix, projectionMatrix;    
 
+let moon;
 let trunksArr = [];
 let leavesArr = [];
 let ground = {
@@ -33,14 +34,15 @@ let groundVertices = [vec3(-60, 0, -60),
     vec3(60, 0, 60),
 ]
 
-let lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
-let lightAmbient = vec4(0.8, 0.8, 0.9, 1.0);
-let lightSpecular = vec4(0.9, 0.9, 0.9, 1.0);
-
-//Position is in homogeneous coordinates
-//If w =1.0, we are specifying a finite (x,y,z) location
-//If w =0.0, light at infinity
 let lightPosition = vec4(2.0, 1.0, -5.0, 0.0);
+let lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
+let lightAmbient = vec4(0.1, 0.1, 0.1, 1.0);
+let lightSpecular = vec4(0.1, 0.1, 0.1, 1.0);
+
+let redLightDiffuse = vec4(1.0, 0.2, 0.2, 1.0); // Reddish color
+let redLightAmbient = vec4(0.2, 0.05, 0.05, 1.0); // Dim ambient component
+let redLightSpecular = vec4(0.8, 0.2, 0.2, 1.0); // Reddish specular highlight
+
 
 let nf;
 let program;
@@ -92,13 +94,26 @@ function init(){
  //-----------------------------------------------------------------------
     generateForest();
     configureGems();
-    placeGems();
-    computeAvgColor(); 
+    placeGems();    
     
     //generateGround();
-
+    generateMoon();
 
     draw();
+}
+
+//Generate moon as a primary light source
+function generateMoon() {
+    let moonRadius = 3; 
+    let moonPosition = vec3(0, 15, 60); 
+    moon = createSphereVertices(moonRadius, 30, 30);
+    moon.materialDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
+    moon.materialAmbient = vec4(1.0, 1.0, 1.0, 1.0);
+    moon.materialSpecular = vec4(1.0, 1.0, 1.0, 1.0);
+    moon.materialShininess = 200.0;
+    moon.modelMatrix = translate(moonPosition[0], moonPosition[1], moonPosition[2]);
+    moon.vao = setUpVertexObject(moon);
+    lightPosition = vec4(moonPosition[0], moonPosition[1], moonPosition[2], 1.0);
 }
 
 //Populate array of trunks and leaves for each tree, set up possible
@@ -146,22 +161,23 @@ function draw(){
 	//Display the current near and far values (for testing purposes only)
 	nf.innerHTML = 'near: ' + Math.round(near * 100)/100 + ', far: ' + Math.round(far*100)/100;
 
-    
-    
     //Send down bark texture and render trunks
     gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), 0);
     trunksArr.forEach((trunk) => drawVertexObject(trunk));
 
-    //Send down leaves texture and render leaves
+    //Send down leaves texture and render leave
     gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), 1);
     leavesArr.forEach((leaves) => drawVertexObject(leaves));
 
+    //Send down moon texture and render moon
+    gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), 3);
+    drawVertexObject(moon);
+
     drawGems();
     //testGems();
-    
 
-    // gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), 2);
-    // drawVertexObject(ground);
+    //gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), 2);
+    //drawVertexObject(ground);
 
     requestAnimationFrame(draw)
 }

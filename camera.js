@@ -10,6 +10,8 @@ const PAN_STEP = 3.0;
 const X_BOUND = 60;
 const Z_BOUND = 60;
 
+let redLightPosition = (0, 0, 0, 1);
+
 //Key-press event handlers for moving the camera
 function keydown(ev) {
     switch (ev.keyCode) {
@@ -48,7 +50,8 @@ function forward() {
     
     atX = newAt[0]; atY = newAt[1]; atZ = newAt[2];
     viewMatrix = lookAt(newEye, newAt, up);
-    checkForGemCollection();
+
+    updateRedLightPosition()
 }
 
 //Move eye and at position backward in the view direction
@@ -67,7 +70,8 @@ function back() {
     
     atX = newAt[0]; atY = newAt[1]; atZ = newAt[2];
     viewMatrix = lookAt(newEye, newAt, up);
-    checkForGemCollection();
+
+    updateRedLightPosition()
 }
 
 //Pan camera left
@@ -146,4 +150,12 @@ function scaleAndAdd(forward, a, b) {
         a[0] *= -1; a[1] *= -1; a[2] *= -1;
     }
     return out;
+}
+
+function updateRedLightPosition() {
+    let eye = getEyePosition(viewMatrix);
+    redLightPosition = vec4(eye[0], eye[1], eye[2], 1.0);
+
+    // Set the uniform for the vertex shader
+    gl.uniform4fv(gl.getUniformLocation(program, "redLightPosition"), flatten(redLightPosition));
 }

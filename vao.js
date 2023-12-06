@@ -11,6 +11,10 @@ function drawVertexObject(shape){
     gl.uniform4fv(gl.getUniformLocation(program, "specularProduct"), flatten(specularProduct) );	
     gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"), flatten(lightPosition) );
 
+    gl.uniform4fv(gl.getUniformLocation(program, "redLightDiffuse"), flatten(redLightDiffuse));
+    gl.uniform4fv(gl.getUniformLocation(program, "redLightSpecular"), flatten(redLightSpecular));
+    gl.uniform4fv(gl.getUniformLocation(program, "redLightAmbient"), flatten(redLightAmbient));
+
     let modelViewMatrix = mult(viewMatrix, shape.modelMatrix);
     gl.uniformMatrix4fv(uniformModelView, false, flatten(modelViewMatrix));
 
@@ -49,6 +53,7 @@ function setUpVertexObject(shape){
     gl.enableVertexAttribArray( attributeNormals );
 
     //set up texture coord buffer
+    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); 
     gl.bufferData(gl.ARRAY_BUFFER, flatten(texCoords), gl.STATIC_DRAW);
     let texCoordLoc = gl.getAttribLocation(program, "a_texCoord");
     gl.vertexAttribPointer(texCoordLoc, 2, gl.FLOAT, false, 0, 0);
