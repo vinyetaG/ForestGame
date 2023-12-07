@@ -50,6 +50,17 @@ function configureTextures() {
         configureTexture(7, emerald, program);
     }
      
+    let bloodBark = new Image();
+    bloodBark.src = document.getElementById("bloodbark").src; 
+    bloodBark.onload = function() {
+        configureTexture(8, bloodBark, program);
+    }
+
+    let bloodLeaves = new Image();
+    bloodLeaves.src = document.getElementById("bloodleaves").src; 
+    bloodLeaves.onload = function() {
+        configureTexture(9, bloodLeaves, program);
+    }
 }
 
 //Configure given image to be used as texture number texNum
@@ -65,6 +76,7 @@ function configureTexture(texNum, image, program ) {
         case 6: gl.activeTexture( gl.TEXTURE6 ); break;
         case 7: gl.activeTexture( gl.TEXTURE7 ); break;
         case 8: gl.activeTexture( gl.TEXTURE8 ); break;
+        case 9: gl.activeTexture( gl.TEXTURE9 ); break;
     }
     //gl.activeTexture( gl.TEXTURE0 );  //0 active by default
     gl.bindTexture(gl.TEXTURE_2D, texture);

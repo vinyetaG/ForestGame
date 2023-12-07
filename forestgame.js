@@ -6,36 +6,14 @@ let viewMatrix, projectionMatrix;
 
 let trunksArr = [];
 let leavesArr = [];
-let ground = {
-    positions: [
-                vec3(-60, -2.0, -60),
-                vec3(60, -2.0, -60),
-                vec3(-60, -2.0, 60),
-                vec3(60, -2.0, 60)
-               ],
-    normals: [
-              vec3(0, 1, 0),
-              vec3(0, 1, 0),
-              vec3(0, 1, 0),
-              vec3(0, 1, 0)
-             ],
-    texcoord: [
-        vec3(-60, -2.0, -60),
-        vec3(60, -2.0, -60),
-        vec3(-60, -2.0, 60),
-        vec3(60, -2.0, 60)
-       ],
-    indices: [0, 1, 2, 2, 3, 1]
-}
-let groundVertices = [vec3(-60, 0, -60),
-    vec3(60, 0, -60),
-    vec3(-60, 0, 60),
-    vec3(60, 0, 60),
-]
+let trunk;
+let leaves;
+let ground = [];
+let groundVertices;
 
 let lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
-let lightAmbient = vec4(0.8, 0.8, 0.9, 1.0);
-let lightSpecular = vec4(0.9, 0.9, 0.9, 1.0);
+let lightAmbient = vec4(0.5, 0.5, 0.5, 1.0);
+let lightSpecular = vec4(0.1, 0.1, 0.1, 1.0);
 
 //Position is in homogeneous coordinates
 //If w =1.0, we are specifying a finite (x,y,z) location
@@ -96,21 +74,22 @@ function init(){
     computeAvgColor(); 
     
     //generateGround();
-
+    generateMoon();
 
     draw();
 }
 
 //Populate array of trunks and leaves for each tree, set up possible
 //gem positions
-function generateForest() { 
+function generateForest() {
+    // Array to store positions of trees with alternative textures
     for (let x = -50; x <= 50; x += 5) {
         for (let z = -50; z <= 50; z += 5) {
             if (x == 0) { continue; }
-
             possibleGemPos.push(vec3(x + 2.5, 0, z + 2.5));
-            let trunk =  createTruncatedConeVertices(0.5 ,0.5, 4.0, 30, 10, true, true);
-            let leaves = createTruncatedConeVertices(2.0, 0, 7.0, 30, 20, true, true);
+
+            trunk = createTruncatedConeVertices(0.5, 0.5, 4.0, 30, 10, true, true);
+            leaves = createTruncatedConeVertices(2.0, 0, 7.0, 30, 20, true, true);
 
             trunk.materialDiffuse =  vec4( 0.5, 0.35, 0.35, 1.0); 
             trunk.materialAmbient =  vec4( 1.0, 1.0, 1.0, 1.0 ); 
@@ -121,20 +100,78 @@ function generateForest() {
             leaves.materialAmbient =  vec4( 0.5, 0.5, 0.5, 1.0 ); 
             leaves.materialSpecular = vec4( 0, 0, 0, 1.0 );
             leaves.materialShininess = 50.0;
-            trunk.modelMatrix =  mult(translate(x, 0, z), mat4());
+
+            // Assign textures based on tree type
+            trunk.texture = 0;
+            leaves.texture = 1;
+
+            trunk.modelMatrix = mult(translate(x, 0, z), mat4());
             leaves.modelMatrix = mult(translate(x, 5.0, z), mat4());
+
             trunk.vao = setUpVertexObject(trunk);
             leaves.vao = setUpVertexObject(leaves);
-            trunksArr.push(trunk); 
+
+            trunksArr.push(trunk);
             leavesArr.push(leaves);
         }
     }
+    let selectedIndices = [];
+    while (selectedIndices.length < 4) {
+        let randomIndex = Math.floor(Math.random() * trunksArr.length);
+        if (!selectedIndices.includes(randomIndex)) {
+            selectedIndices.push(randomIndex);
+        }
+    }
+
+    for (let i = 0; i < selectedIndices.length; i++) {
+        let index = selectedIndices[i];
+        trunksArr[index].texture = 8;
+        leavesArr[index].texture = 9;
+    }
+}
+
+
+//Generate moon as a primary light source
+function generateMoon() {
+    let moonRadius = 3; 
+    let moonPosition = vec3(0, 15, 60); 
+    moon = createSphereVertices(moonRadius, 30, 30);
+    moon.materialDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
+    moon.materialAmbient = vec4(1.0, 1.0, 1.0, 1.0);
+    moon.materialSpecular = vec4(1.0, 1.0, 1.0, 1.0);
+    moon.materialShininess = 200.0;
+    moon.modelMatrix = translate(moonPosition[0], moonPosition[1], moonPosition[2]);
+    moon.vao = setUpVertexObject(moon);
+    lightPosition = vec4(moonPosition[0], moonPosition[1], moonPosition[2], 1.0);
 }
 
 function generateGround() {
-    ground.materialDiffuse =  vec4( 0.35, 0.35, 0.50, 1.0); 
-    ground.materialAmbient =  vec4( 0.2, 0.5, 0.2, 1.0 ); 
-    ground.materialSpecular = vec4( 0.3, 0.9, 0.5, 1.0 );
+    ground.positions = [
+        vec3(-55, -2.0, -55), // Bottom-left corner
+        vec3(55, -2.0, -55),  // Bottom-right corner
+        vec3(-55, -2.0, 55),  // Top-left corner
+        vec3(55, -2.0, 55)    // Top-right corner
+    ];
+    
+    ground.normals = [
+        vec3(0, 1, 0),
+        vec3(0, 1, 0),
+        vec3(0, 1, 0),
+        vec3(0, 1, 0)
+    ];
+    
+    ground.texcoord = [
+        vec2(0, 0),
+        vec2(1, 0),
+        vec2(0, 1),
+        vec2(1, 1)
+    ];
+    
+    ground.indices = [0, 1, 2, 2, 3, 1];
+    
+    ground.materialDiffuse = vec4(0.35, 0.35, 0.50, 1.0); 
+    ground.materialAmbient = vec4(0.2, 0.5, 0.2, 1.0); 
+    ground.materialSpecular = vec4(0.3, 0.9, 0.5, 1.0);
     ground.materialShininess = 80.0;
     ground.modelMatrix = mat4();
     ground.vao = setUpVertexObject(ground);
@@ -146,22 +183,27 @@ function draw(){
 	//Display the current near and far values (for testing purposes only)
 	nf.innerHTML = 'near: ' + Math.round(near * 100)/100 + ', far: ' + Math.round(far*100)/100;
 
-    
+    //gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), 2);
+    //drawVertexObject(ground);
     
     //Send down bark texture and render trunks
-    gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), 0);
-    trunksArr.forEach((trunk) => drawVertexObject(trunk));
+    trunksArr.forEach((trunk) => {
+            gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), trunk.texture);
+            drawVertexObject(trunk);
+    });
 
-    //Send down leaves texture and render leaves
-    gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), 1);
-    leavesArr.forEach((leaves) => drawVertexObject(leaves));
+    // Render only leaves with alternate texture (texture 8)
+    leavesArr.forEach((leaves) => {
+            gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), leaves.texture);
+            drawVertexObject(leaves);
+    });
+
+    //Send down moon texture and render moon
+    gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), 3);
+    drawVertexObject(moon);
 
     drawGems();
     //testGems();
-    
-
-    // gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), 2);
-    // drawVertexObject(ground);
 
     requestAnimationFrame(draw)
 }
