@@ -40,8 +40,6 @@ let groundVertices = [vec3(-60, 0, -60),
 let nf;
 let program;
 
-
-
 function init(){
 
 	//Get graphics context

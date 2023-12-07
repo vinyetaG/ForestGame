@@ -1,7 +1,7 @@
 //File containing functions for configuring and drawing vertex array objects
 
 let moonDiffuse = vec4(0.8, 0.8, 1.0, 1.0);
-let moonAmbient = vec4(0.25, 0.25, 0.32, 1.0);
+let moonAmbient = vec4(0.7, 0.7, 0.8, 1.0);
 let moonSpecular = vec4(0.9, 0.9, 0.9, 1.0);
 let moonPosition = vec4();
 

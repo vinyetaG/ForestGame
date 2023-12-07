@@ -48,6 +48,9 @@ function forward() {
     
     atX = newAt[0]; atY = newAt[1]; atZ = newAt[2];
     viewMatrix = lookAt(newEye, newAt, up);
+    
+    //Move moon forward by z component of view direction to give illusion of no movement
+    moon.modelMatrix = mult(translate(0, 0, -1 * MOVE_STEP * viewDirection[2]), moon.modelMatrix);
     lanternPosition = newEye;
     checkForGemCollection();
     //console.log(lanternPosition);
@@ -69,6 +72,9 @@ function back() {
     
     atX = newAt[0]; atY = newAt[1]; atZ = newAt[2];
     viewMatrix = lookAt(newEye, newAt, up);
+
+    //Move moon backwards by z component of view direction to give illusion of no movement
+    moon.modelMatrix = mult(translate(0, 0, MOVE_STEP * viewDirection[2]), moon.modelMatrix);
     lanternPosition = newEye;
     checkForGemCollection();
     //console.log(lanternPosition);
