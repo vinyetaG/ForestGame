@@ -99,15 +99,18 @@ function init(){
 
 //Populate array of trunks and leaves for each tree, set up possible
 //gem positions
+let alternativeTrees = []; // Array to hold alternative tree data
+
 function generateForest() {
-    // Array to store positions of trees with alternative textures
+    // ... [rest of your existing code before the loop]
+
     for (let x = -50; x <= 50; x += 5) {
         for (let z = -50; z <= 50; z += 5) {
             if (x == 0) { continue; }
             possibleGemPos.push(vec3(x + 2.5, 0, z + 2.5));
 
-            trunk = createTruncatedConeVertices(0.5, 0.5, 4.0, 30, 10, true, true);
-            leaves = createTruncatedConeVertices(2.0, 0, 7.0, 30, 20, true, true);
+            let trunk = createTruncatedConeVertices(0.5, 0.5, 4.0, 30, 10, true, true);
+            let leaves = createTruncatedConeVertices(2.0, 0, 7.0, 30, 20, true, true);
 
             trunk.materialDiffuse =  vec4( 0.5, 0.35, 0.35, 1.0); 
             trunk.materialAmbient =  vec4( 1.0, 1.0, 1.0, 1.0 ); 
@@ -119,7 +122,6 @@ function generateForest() {
             leaves.materialSpecular = vec4( 0, 0, 0, 1.0 );
             leaves.materialShininess = 50.0;
 
-            // Assign textures based on tree type
             trunk.texture = 0;
             leaves.texture = 1;
 
@@ -133,6 +135,8 @@ function generateForest() {
             leavesArr.push(leaves);
         }
     }
+
+    // Select a few trees to have alternative textures
     let selectedIndices = [];
     while (selectedIndices.length < 4) {
         let randomIndex = Math.floor(Math.random() * trunksArr.length);
@@ -141,13 +145,20 @@ function generateForest() {
         }
     }
 
+    // Add alternative trees' data to the alternativeTrees array
     for (let i = 0; i < selectedIndices.length; i++) {
         let index = selectedIndices[i];
-        trunksArr[index].texture = 8;
-        leavesArr[index].texture = 9;
-    }
-}
+        trunksArr[index].texture = 8; // Texture index for alternative trunk
+        leavesArr[index].texture = 9; // Texture index for alternative leaves
 
+        // Add to alternativeTrees array
+        alternativeTrees.push({
+            position: vec3(trunksArr[index].modelMatrix[0][3], trunksArr[index].modelMatrix[1][3], trunksArr[index].modelMatrix[2][3])
+        });
+        console.log("Evil Tree " + (i + 1) + ": " + alternativeTrees[i].position);
+    }
+    console.log("");
+}
 
 //Generate moon as a primary light source
 function generateMoon() {

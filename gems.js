@@ -222,6 +222,38 @@ function computeAvgColor(isTarget) {
     
 }
 
+function isApproachingTree(loc1, loc2) {
+    if (Math.abs(loc1[0] - loc2[0]) <= 9.25  &&
+        Math.abs(loc1[2] - loc2[2]) <= 8.25 ) {
+        return true;
+    }
+    return false;
+}
+
+function checkAndRemoveGemIfNearEvilTree() {
+    let eye = getEyePosition(viewMatrix);
+    for (let i = 0; i < alternativeTrees.length; i++) {
+        if (isApproachingTree(alternativeTrees[i].position, eye)) { 
+            removeRandomGem();
+        }
+    }
+}
+
+function removeRandomGem() {
+    if (collectedGems.length > 0) {
+        let randomIndex = Math.floor(Math.random() * collectedGems.length);
+        let removedGem = collectedGems.splice(randomIndex, 1)[0];
+        console.log("A gem has been taken: " + removedGem.name);
+        alert("A gem has been taken: " + removedGem.name + "!");
+        if(collectedGems.length == 0) {
+            let currColorBox = document.getElementById("currColor");
+            currColorBox.style.backgroundColor = `rgb(0, 0 , 0)`;
+        } else {
+            computeAvgColor(false);
+        }
+    }
+}
+
 //Select new random gem positions and target color, clear current color
 function resetArena() {
     usedLocs = [];

@@ -54,6 +54,7 @@ function forward() {
     lanternPosition = newEye;
     checkForGemCollection();
     //console.log(lanternPosition);
+    checkAndRemoveGemIfNearEvilTree();
 }
 
 //Move eye and at position backward in the view direction
@@ -78,6 +79,16 @@ function back() {
     lanternPosition = newEye;
     checkForGemCollection();
     //console.log(lanternPosition);
+    checkAndRemoveGemIfNearEvilTree();
+}
+
+function removeRandomGem() {
+    if (collectedGems.length > 0) {
+        let randomIndex = Math.floor(Math.random() * collectedGems.length);
+        let removedGem = collectedGems.splice(randomIndex, 1)[0];
+        console.log("A gem has been taken: "+ removedGem.name);
+        alert("A gem has been taken: "+ removedGem.name + "!");
+    }
 }
 
 //Pan camera left
