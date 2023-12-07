@@ -48,7 +48,9 @@ function forward() {
     
     atX = newAt[0]; atY = newAt[1]; atZ = newAt[2];
     viewMatrix = lookAt(newEye, newAt, up);
+    lanternPosition = newEye;
     checkForGemCollection();
+    //console.log(lanternPosition);
 }
 
 //Move eye and at position backward in the view direction
@@ -67,7 +69,9 @@ function back() {
     
     atX = newAt[0]; atY = newAt[1]; atZ = newAt[2];
     viewMatrix = lookAt(newEye, newAt, up);
+    lanternPosition = newEye;
     checkForGemCollection();
+    //console.log(lanternPosition);
 }
 
 //Pan camera left

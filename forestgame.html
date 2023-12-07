@@ -13,8 +13,10 @@
 
         uniform mat4 u_modelViewMatrix;
         uniform mat4 u_projectionMatrix;
-        uniform vec4 ambientProduct, diffuseProduct, specularProduct;
-        uniform vec4 lightPosition;
+        uniform vec4 moonAmbientProduct, moonDiffuseProduct, moonSpecularProduct;
+        //uniform vec4 lanternAmbientProduct, lanternDiffuseProduct, lanternSpecularProduct;
+        uniform vec4 moonLightPosition;
+        //uniform vec4 lanternLightPosition;
         uniform float shininess;
 
         out vec4 t_color;
@@ -24,40 +26,46 @@
             // Transform vertex position into eye coordinates
             vec3 pos = -(u_modelViewMatrix * a_coords).xyz;
             
-            vec3 light = lightPosition.xyz;
+            vec3 moonlight = moonLightPosition.xyz;
+            //vec3 lantern = lanternLightPosition.xyz;
 
-            // Normalized vector from pos to light
-            vec3 L = normalize( light - pos );
+            vec3 moonL = normalize( pos - moonlight );
+            //vec3 lanternL = normalize( lantern - pos );
 
-            // Next two lines compute halfway vector, which is unnecessary in diffuse.
             vec3 E = normalize( -pos );
-            vec3 H = normalize( L + E );
+            vec3 moonH = normalize( moonL + E );
+            //vec3 lanternH = normalize( lanternL + E );
         
             vec4 NN = vec4(a_normals,0);
 
             // Transform vertex normal into eye coordinates
             vec3 N = normalize((transpose(inverse(u_modelViewMatrix))*NN).xyz);
-            //vec3 N = normalize((u_modelViewMatrix*NN).xyz);
-            // Note the above line is valid in this case, but not in general for modelview matrices used to transform the normals
-            // If you have an arbitrary sequence of modeling transformations that you are constantly applying to the object,
-            // then the normals of that object are transformed by Tranpose(Inverse(u_modelViewMatrix)), not u_modelViewMatrix
-            // For just rotations around the origin (and perhaps some initial modeling applied once), this is the same as u_modelViewMatrix, so we stick with that here
+            //vec3 N = normalize((u_modelViewMatrix*NN).xyz)
 
             // Compute terms in the illumination equation
-            vec4 ambient = ambientProduct;
+            vec4 ambientMoon = moonAmbientProduct;
+            //vec4 ambientLantern = lanternAmbientProduct;
 
-            float Kd = max( dot(L, N), 0.0 );
-            vec4  diffuse = Kd*diffuseProduct;
+            float moonKd = max( dot(moonL, N), 0.0 );
+            vec4 diffuseMoon = moonKd*moonDiffuseProduct;
+            //float lanternKd = max( dot(lanternL, N), 0.0 );
+            //vec4 diffuseLantern = lanternKd * lanternDiffuseProduct;
 
-            float Ks = pow( max(dot(N, H), 0.0), shininess );
-            vec4  specular = Ks * specularProduct;
+            float moonKs = pow( max(dot(N, moonH), 0.0), shininess);
+            vec4 specularMoon = moonKs * moonSpecularProduct;
+            //float lanternKs = pow( max(dot(N, lanternH), 0.0), shininess);
+            //vec4 specularLantern = lanternKs * lanternSpecularProduct;
             
-            if( dot(L, N) < 0.0 ) {
-                specular = vec4(0.0, 0.0, 0.0, 1.0);
+            if( dot(moonL, N) < 0.0 ) {
+                specularMoon = vec4(0.0, 0.0, 0.0, 1.0);
             } 
 
+            //if( dot(lanternL, N) < 0.0 ) {
+            //    specularLantern = vec4(0.0, 0.0, 0.0, 1.0);
+            //} 
+
             gl_Position = u_projectionMatrix * u_modelViewMatrix * a_coords;
-            t_color = ambient + diffuse + specular;
+            t_color = ambientMoon + diffuseMoon + specularMoon; //+ ambientLantern + diffuseLantern + specularLantern;
             
             t_color.a = 1.0;
             v_texCoord = a_texCoord;

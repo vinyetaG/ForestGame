@@ -1,15 +1,35 @@
 //File containing functions for configuring and drawing vertex array objects
 
+let moonDiffuse = vec4(0.8, 0.8, 1.0, 1.0);
+let moonAmbient = vec4(0.25, 0.25, 0.32, 1.0);
+let moonSpecular = vec4(0.9, 0.9, 0.9, 1.0);
+let moonPosition = vec4();
+
+let lanternDiffuse= vec4(0.5, 0.03, 0.02, 1.0);
+let lanternAmbient = vec4(0.00, 0.00, 0.00, 1.0);
+let lanternSpecular = vec4(0.5, 0.03, 0.02, 1.0);
+let lanternPosition = vec4(eyeX, eyeY, eyeZ, 1.0);
+
 //Draws each shape using its VAO, model matrix, and material properties
 function drawVertexObject(shape){
-    let ambientProduct = mult(lightAmbient, shape.materialAmbient);
-    let diffuseProduct = mult(lightDiffuse, shape.materialDiffuse);
-    let specularProduct = mult(lightSpecular, shape.materialSpecular);
+    let ambientMoonProduct = mult(moonAmbient, shape.materialAmbient);
+    let diffuseMoonProduct = mult(moonDiffuse, shape.materialDiffuse);
+    let specularMoonProduct = mult(moonSpecular, shape.materialSpecular);
+
+    // let ambientLanternProduct = mult(lanternAmbient, shape.materialAmbient);
+    // let diffuseLanternProduct = mult(lanternDiffuse, shape.materialDiffuse);
+    // let specularLanternProduct = mult(lanternSpecular, shape.materialSpecular);
+
     gl.uniform1f(gl.getUniformLocation(program, "shininess"), shape.materialShininess);
-    gl.uniform4fv(gl.getUniformLocation(program, "ambientProduct"),flatten(ambientProduct));
-    gl.uniform4fv(gl.getUniformLocation(program, "diffuseProduct"),flatten(diffuseProduct) );
-    gl.uniform4fv(gl.getUniformLocation(program, "specularProduct"), flatten(specularProduct) );	
-    gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"), flatten(lightPosition) );
+    gl.uniform4fv(gl.getUniformLocation(program, "moonAmbientProduct"),flatten(ambientMoonProduct));
+    gl.uniform4fv(gl.getUniformLocation(program, "moonDiffuseProduct"),flatten(diffuseMoonProduct) );
+    gl.uniform4fv(gl.getUniformLocation(program, "moonSpecularProduct"), flatten(specularMoonProduct) );	
+    gl.uniform4fv(gl.getUniformLocation(program, "moonLightPosition"), flatten(moonPosition) );
+
+    // gl.uniform4fv(gl.getUniformLocation(program, "lanternAmbientProduct"),flatten(ambientLanternProduct));
+    // gl.uniform4fv(gl.getUniformLocation(program, "lanternDiffuseProduct"),flatten(diffuseLanternProduct) );
+    // gl.uniform4fv(gl.getUniformLocation(program, "lanternSpecularProduct"), flatten(specularLanternProduct) );	
+    // gl.uniform4fv(gl.getUniformLocation(program, "lanternLightPosition"), flatten(lanternPosition) );
 
     let modelViewMatrix = mult(viewMatrix, shape.modelMatrix);
     gl.uniformMatrix4fv(uniformModelView, false, flatten(modelViewMatrix));

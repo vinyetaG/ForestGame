@@ -27,23 +27,20 @@ let ground = {
        ],
     indices: [0, 1, 2, 2, 3, 1]
 }
+
+let moon;
 let groundVertices = [vec3(-60, 0, -60),
     vec3(60, 0, -60),
     vec3(-60, 0, 60),
     vec3(60, 0, 60),
 ]
 
-let lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
-let lightAmbient = vec4(0.8, 0.8, 0.9, 1.0);
-let lightSpecular = vec4(0.9, 0.9, 0.9, 1.0);
 
-//Position is in homogeneous coordinates
-//If w =1.0, we are specifying a finite (x,y,z) location
-//If w =0.0, light at infinity
-let lightPosition = vec4(2.0, 1.0, -5.0, 0.0);
 
 let nf;
 let program;
+
+
 
 function init(){
 
@@ -94,6 +91,7 @@ function init(){
     configureGems();
     placeGems();
     computeAvgColor(); 
+    generateMoon();
     
     //generateGround();
 
@@ -131,6 +129,19 @@ function generateForest() {
     }
 }
 
+function generateMoon() {
+    let moonRadius = 3; 
+    let moonPosition = vec4(0, 15, 60, 1.0); 
+    moon = createSphereVertices(moonRadius, 30, 30);
+    moon.materialDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
+    moon.materialAmbient = vec4(1.0, 1.0, 1.0, 1.0);
+    moon.materialSpecular = vec4(1.0, 1.0, 1.0, 1.0);
+    moon.materialShininess = 200.0;
+    moon.modelMatrix = translate(moonPosition[0], moonPosition[1], moonPosition[2]);
+    moon.vao = setUpVertexObject(moon);
+    moonPosition = vec4(moonPosition[0], moonPosition[1], -moonPosition[2], 1.0);
+}
+
 function generateGround() {
     ground.materialDiffuse =  vec4( 0.35, 0.35, 0.50, 1.0); 
     ground.materialAmbient =  vec4( 0.2, 0.5, 0.2, 1.0 ); 
@@ -157,6 +168,10 @@ function draw(){
     leavesArr.forEach((leaves) => drawVertexObject(leaves));
 
     drawGems();
+
+    //Send down moon texture and render moon
+    gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), 3);
+    drawVertexObject(moon);
     //testGems();
     
 
