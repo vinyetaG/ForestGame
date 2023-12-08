@@ -222,6 +222,9 @@ function computeAvgColor(isTarget) {
     
 }
 
+//Returns whether the coordinates of the first location are
+//close enough to the second to be considered colliding
+// (x within 9.25 and z within 8.25)
 function isApproachingTree(loc1, loc2) {
     if (Math.abs(loc1[0] - loc2[0]) <= 9.25  &&
         Math.abs(loc1[2] - loc2[2]) <= 8.25 ) {
@@ -230,6 +233,8 @@ function isApproachingTree(loc1, loc2) {
     return false;
 }
 
+// Check to see if the player is near an evil tree
+// and if so, remove a gem
 function checkAndRemoveGemIfNearEvilTree() {
     let eye = getEyePosition(viewMatrix);
     for (let i = 0; i < alternativeTrees.length; i++) {
@@ -239,6 +244,8 @@ function checkAndRemoveGemIfNearEvilTree() {
     }
 }
 
+// Removes a random gem from the player's collected gems and 
+// alerts that it has been removed and what gem was removed
 function removeRandomGem() {
     if (collectedGems.length > 0) {
         let randomIndex = Math.floor(Math.random() * collectedGems.length);

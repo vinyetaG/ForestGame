@@ -6,6 +6,7 @@ let viewMatrix, projectionMatrix;
 
 let trunksArr = [];
 let leavesArr = [];
+let alternativeTrees = [];
 
 let ground = {
     positions: [
@@ -99,11 +100,7 @@ function init(){
 
 //Populate array of trunks and leaves for each tree, set up possible
 //gem positions
-let alternativeTrees = []; // Array to hold alternative tree data
-
 function generateForest() {
-    // ... [rest of your existing code before the loop]
-
     for (let x = -50; x <= 50; x += 5) {
         for (let z = -50; z <= 50; z += 5) {
             if (x == 0) { continue; }
@@ -189,10 +186,10 @@ function generateMoon() {
 
 function generateGround() {
     ground.positions = [
-        vec3(-55, -2.0, -55), // Bottom-left corner
-        vec3(55, -2.0, -55),  // Bottom-right corner
-        vec3(-55, -2.0, 55),  // Top-left corner
-        vec3(55, -2.0, 55)    // Top-right corner
+        vec3(-55, -2.0, -55), 
+        vec3(55, -2.0, -55), 
+        vec3(-55, -2.0, 55), 
+        vec3(55, -2.0, 55)  
     ];
     
     ground.normals = [
