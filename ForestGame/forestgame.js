@@ -31,7 +31,6 @@ function init(){
 	gl.useProgram( program );
  
     walkingSound = document.getElementById("walkingSound");
-    document.addEventListener('keyup', keyup);
 
     dingSound = document.getElementById("dingSound");
 
@@ -68,47 +67,8 @@ function init(){
     placeGems();
     computeAvgColor(); 
     generateMoon();
-    placeLogs();
-    placeFire();
-    
-    //generateGround();
-    generateMoon();
 
     draw();
-}
-
-function placeLogs() {
-    logs = {
-        name: "logs",
-        positions: logsMesh.vertices[0].values,
-        indices: logsMesh.connectivity[0].indices,
-        normals:  logsMesh.vertices[1].values,
-        texcoord: logsMesh.vertices[0].values,
-        materialDiffuse: vec4( 0.8, 0.8, 0.85, 1.0),
-        materialAmbient:  vec4( 0.8, 0.8, 0.85, 1.0),
-        materialSpecular: vec4( 0.5, 0.5, 0.5, 1.0),
-        materialShininess: 70.0,
-        modelMatrix: translate(0, -1, 25),
-        texNum: 10
-    };
-    logs.vao = setUpVertexObject(logs);
-}
-
-function placeFire() {
-    fire = {
-        name: "fire",
-        positions: fireMesh.vertices[0].values,
-        indices: fireMesh.connectivity[0].indices,
-        normals:  fireMesh.vertices[1].values,
-        texcoord: fireMesh.vertices[0].values,
-        materialDiffuse: vec4( 0.8, 0.8, 0.85, 1.0),
-        materialAmbient:  vec4( 0.8, 0.8, 0.85, 1.0),
-        materialSpecular: vec4( 0.5, 0.5, 0.5, 1.0),
-        materialShininess: 70.0,
-        modelMatrix: translate(0, -0.9, 25),
-        texNum: 11
-    };
-    fire.vao = setUpVertexObject(fire);
 }
 
 //Populate array of trunks and leaves for each tree, set up possible
@@ -181,59 +141,11 @@ function generateMoon() {
     moon.materialShininess = 200.0;
     moon.modelMatrix = translate(moonPosition[0], moonPosition[1], moonPosition[2]);
     moon.vao = setUpVertexObject(moon);
-    lightPosition = vec4(moonPosition[0], moonPosition[1], moonPosition[2], 0.0);
-}
-
-function generateMoon() {
-    let moonRadius = 3; 
-    let moonPosition = vec4(0, 15, 60, 1.0); 
-    moon = createSphereVertices(moonRadius, 30, 30);
-    moon.materialDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
-    moon.materialAmbient = vec4(1.0, 1.0, 1.0, 1.0);
-    moon.materialSpecular = vec4(1.0, 1.0, 1.0, 1.0);
-    moon.materialShininess = 200.0;
-    moon.modelMatrix = translate(moonPosition[0], moonPosition[1], moonPosition[2]);
-    moon.vao = setUpVertexObject(moon);
-    moonPosition = vec4(moonPosition[0], moonPosition[1], -moonPosition[2], 0.0);
-}
-
-function generateGround() {
-    ground.positions = [
-        vec3(-55, -2.0, -55), 
-        vec3(55, -2.0, -55), 
-        vec3(-55, -2.0, 55), 
-        vec3(55, -2.0, 55)  
-    ];
-    
-    ground.normals = [
-        vec3(0, 1, 0),
-        vec3(0, 1, 0),
-        vec3(0, 1, 0),
-        vec3(0, 1, 0)
-    ];
-    
-    ground.texcoord = [
-        vec2(0, 0),
-        vec2(1, 0),
-        vec2(0, 1),
-        vec2(1, 1)
-    ];
-    
-    ground.indices = [0, 1, 2, 2, 3, 1];
-    
-    ground.materialDiffuse = vec4(0.35, 0.35, 0.50, 1.0); 
-    ground.materialAmbient = vec4(0.2, 0.5, 0.2, 1.0); 
-    ground.materialSpecular = vec4(0.3, 0.9, 0.5, 1.0);
-    ground.materialShininess = 80.0;
-    ground.modelMatrix = mat4();
-    ground.vao = setUpVertexObject(ground);
+    moonlightPosition = vec4(moonPosition[0], moonPosition[1], moonPosition[2], 1.0);
 }
 
 function draw(){
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
- 
-    //gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), 2);
-    //drawVertexObject(ground);
     
     //Send down bark texture and render trunks
     trunksArr.forEach((trunk) => {
@@ -251,19 +163,7 @@ function draw(){
     gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), 3);
     drawVertexObject(moon);
 
+    //Render generated gems
     drawGems();
-
-    //Send down log texture and render logs for campfire
-    gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), logs.texNum);
-    drawVertexObject(logs);
-
-    //Send down fire texture and render fire for campfire
-    gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), fire.texNum);
-    drawVertexObject(fire);
-
-    //Send down moon texture and render moon
-    gl.uniform1i(gl.getUniformLocation(program, "u_textureMap"), 3);
-    drawVertexObject(moon);
-
     requestAnimationFrame(draw);
 }

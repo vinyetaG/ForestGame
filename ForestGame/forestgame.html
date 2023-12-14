@@ -15,7 +15,6 @@
         uniform mat4 u_projectionMatrix;
         uniform vec4 moonAmbientProduct, moonDiffuseProduct, moonSpecularProduct;
         uniform vec4 lanternAmbientProduct, lanternDiffuseProduct, lanternSpecularProduct;
-        uniform vec4 campfireAmbientProduct, campfireDiffuseProduct, campfireSpecularProduct;
         uniform vec4 moonLightPosition;
         uniform vec4 campfireLightPosition;
         uniform vec4 lanternLightPosition;
@@ -26,28 +25,23 @@
 
         void main() {
             // Transform vertex position into eye coordinates
-            vec3 pos = -(u_modelViewMatrix * a_coords).xyz;
-            vec4 worldPos = u_modelViewMatrix * a_coords;
+            vec3 pos = (u_modelViewMatrix * a_coords).xyz;
             
             vec3 moonlight = moonLightPosition.xyz;
             vec3 lantern = lanternLightPosition.xyz;
-            vec3 campfire = campfireLightPosition.xyz;
             
             vec3 moonL = normalize(pos - moonlight);
             vec3 lanternL = normalize(pos - lantern);
-            vec3 campfireL = normalize(pos - campfire); 
             
             vec3 E = normalize(-pos);
             vec3 moonH = normalize(moonL + E);
             vec3 lanternH = normalize(lanternL + E);
-            vec3 campfireH = normalize(campfireL + E); 
             
             vec4 NN = vec4(a_normals, 0);
             vec3 N = normalize((transpose(inverse(u_modelViewMatrix)) * NN).xyz);
             
             vec4 ambientMoon = moonAmbientProduct;
             vec4 ambientLantern = lanternAmbientProduct;
-            vec4 ambientCampfire = vec4(1.0, 0.5, 0.0, 1.0); 
             
             float moonKd = max(dot(moonL, N), 0.0);
             vec4 diffuseMoon = moonKd * moonDiffuseProduct;
@@ -55,17 +49,11 @@
             float lanternKd = max(dot(lanternL, N), 0.0);
             vec4 diffuseLantern = lanternKd * lanternDiffuseProduct;
             
-            float campfireKd = max(dot(campfireL, N), 0.0); 
-            vec4 diffuseCampfire = campfireKd * vec4(1.0, 0.5, 0.0, 1.0);
-            
             float moonKs = pow(max(dot(N, moonH), 0.0), shininess);
             vec4 specularMoon = moonKs * moonSpecularProduct;
             
             float lanternKs = pow(max(dot(N, lanternH), 0.0), shininess);
             vec4 specularLantern = lanternKs * lanternSpecularProduct;
-            
-            float campfireKs = pow(max(dot(N, campfireH), 0.0), shininess); 
-            vec4 specularCampfire = campfireKs * vec4(1.0, 0.5, 0.0, 1.0); 
             
             if (dot(moonL, N) < 0.0) {
                 specularMoon = vec4(0.0, 0.0, 0.0, 1.0);
@@ -73,15 +61,12 @@
             
             gl_Position = u_projectionMatrix * u_modelViewMatrix * a_coords;
 
-            float distanceFromCampfire = length(worldPos.xyz - campfire); 
-            float distanceFromLantern = length(worldPos.xyz - lantern);
-
-            float campfireAttenuation = 1.0 / (1.0 + 0.1 * distanceFromCampfire + 0.01 * distanceFromCampfire * distanceFromCampfire);
+            float distanceFromLantern = length(pos.xyz - lantern);
                         
-            if (distanceFromLantern < 20.0) {
+            if (distanceFromLantern < 25.0) {
                 t_color = ambientMoon + diffuseMoon + specularMoon + ambientLantern + diffuseLantern + specularLantern;
             } else {
-                t_color = ambientMoon + diffuseMoon + specularMoon + ambientCampfire * campfireAttenuation + diffuseCampfire + specularCampfire;
+                t_color = ambientMoon + diffuseMoon + specularMoon;
             }
             
             t_color.a = 1.0;
@@ -117,8 +102,6 @@
     <script type="text/javascript" src="models/diamond.js"></script>
     <script type="text/javascript" src="models/gemstone.js"></script>
     <script type="text/javascript" src="gems.js"></script>
-    <script type="text/javascript" src="models/logs.js"></script>
-    <script type="text/javascript" src="models/fire.js"></script>
     
 </head>
 
@@ -136,7 +119,6 @@
 	</div>
     <img id = "bark" src = "textures/bark.jpg" hidden></img>
     <img id = "leaves" src = "textures/pineleaves.png" hidden></img>
-    <img id = "grass" src = "textures/grass.jpg" hidden></img>
     <img id = "moon" src = "textures/moon.png" hidden></img>
     <img id = "diamond" src = "textures/diamond.jpg" hidden></img>
     <img id = "ruby" src = "textures/ruby.jpg" hidden></img>
@@ -144,8 +126,6 @@
     <img id = "emerald" src = "textures/emerald.jpg" hidden></img>
     <img id = "bloodbark" src = "textures/evilbark.png" hidden></img>
     <img id = "bloodleaves" src = "textures/evilpineleaves.png" hidden></img>
-    <img id = "logs" src = "textures/log.png" hidden></img>
-    <img id = "fire" src = "textures/fire.png" hidden></img>
     <audio id="walkingSound" src="sounds/walking.mp3" preload="auto"></audio>
     <audio id="dingSound" src="sounds/ding.mp3" preload="auto"></audio>
     <audio id="evilTreeSound" src="sounds/dundundun.mp3" preload="auto"></audio>

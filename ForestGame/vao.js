@@ -1,12 +1,12 @@
 //File containing functions for configuring and drawing vertex array objects
 
-let moonDiffuse = vec4(0.4, 0.4, 0.5, 1.0);
-let moonAmbient = vec4(0.35, 0.35, 0.4, 1.0);  
-let moonSpecular = vec4(0.45, 0.45, 0.45, 1.0); 
-let moonPosition = vec4();
+let moonDiffuse = vec4(0.2, 0.2, 0.3, 1.0);
+let moonAmbient = vec4(0.15, 0.15, 0.2, 1.0);  
+let moonSpecular = vec4(0.3, 0.3, 0.35, 1.0); 
+let moonlightPosition = vec4();
 
-let lanternDiffuse = vec4(0.5, 0.1, 0.1, 1.0);
-let lanternAmbient = vec4(0.3, 0.0, 0.0, 1.0);  
+let lanternDiffuse = vec4(0.8, 0.3, 0.2, 1.0);
+let lanternAmbient = vec4(0.6, 0.3, 0.3, 1.0);  
 let lanternSpecular = vec4(0.25, 0.1, 0.1, 1.0); 
 let lanternPosition = vec4();                  
 
@@ -24,7 +24,7 @@ function drawVertexObject(shape){
     gl.uniform4fv(gl.getUniformLocation(program, "moonAmbientProduct"),flatten(ambientMoonProduct));
     gl.uniform4fv(gl.getUniformLocation(program, "moonDiffuseProduct"),flatten(diffuseMoonProduct) );
     gl.uniform4fv(gl.getUniformLocation(program, "moonSpecularProduct"), flatten(specularMoonProduct) );	
-    gl.uniform4fv(gl.getUniformLocation(program, "moonLightPosition"), flatten(moonPosition) );
+    gl.uniform4fv(gl.getUniformLocation(program, "moonLightPosition"), flatten(moonlightPosition) );
 
     gl.uniform4fv(gl.getUniformLocation(program, "lanternAmbientProduct"),flatten(ambientLanternProduct));
     gl.uniform4fv(gl.getUniformLocation(program, "lanternDiffuseProduct"),flatten(diffuseLanternProduct) );

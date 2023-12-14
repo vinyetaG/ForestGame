@@ -14,12 +14,6 @@ function configureTextures() {
         configureTexture(1, leaves, program);
     }
 
-    let grass = new Image();
-    grass.src = document.getElementById("grass").src; 
-    grass.onload = function() {
-        configureTexture(2, grass, program);
-    }
-
     let moon = new Image();
     moon.src = document.getElementById("moon").src; 
     moon.onload = function() {
@@ -62,17 +56,6 @@ function configureTextures() {
         configureTexture(9, bloodLeaves, program);
     }
 
-    let logs = new Image();
-    logs.src = document.getElementById("logs").src; 
-    logs.onload = function() {
-        configureTexture(10, logs, program);
-    }
-
-    let fire = new Image();
-    fire.src = document.getElementById("fire").src; 
-    fire.onload = function() {
-        configureTexture(11, fire, program);
-    }
 }
 
 //Configure given image to be used as texture number texNum
@@ -89,8 +72,6 @@ function configureTexture(texNum, image, program ) {
         case 7: gl.activeTexture( gl.TEXTURE7 ); break;
         case 8: gl.activeTexture( gl.TEXTURE8 ); break;
         case 9: gl.activeTexture( gl.TEXTURE9 ); break;
-        case 10: gl.activeTexture( gl.TEXTURE10 ); break;
-        case 11: gl.activeTexture( gl.TEXTURE11 ); break;
     }
     //gl.activeTexture( gl.TEXTURE0 );  //0 active by default
     gl.bindTexture(gl.TEXTURE_2D, texture);
